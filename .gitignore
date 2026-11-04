@@ -2,7 +2,7 @@
 .venv/
 venv/
 __pycache__/
-.vscode/
+.vscode/*
 
 # Dados pesados
 data/raw/
