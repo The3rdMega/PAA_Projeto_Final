@@ -1,0 +1,11 @@
+# Ambientes virtuais
+.venv/
+venv/
+__pycache__/
+
+# Dados pesados
+data/raw/
+data/processed/
+*.bin
+*.pt
+*.safetensors
