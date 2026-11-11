@@ -1,7 +1,9 @@
 import search_engine, streamlit
 
-def search(engine : search_engine.RAGSearchEngine) -> str:
-    pergunta = streamlit.session_state['input_area']
+def search(engine : search_engine.RAGSearchEngine):
+    if "input_area" not in streamlit.session_state:
+        return
+    pergunta = streamlit.session_state["input_area"]
     if pergunta == "":
         streamlit.session_state["output_area"] = "deu nada"
     saida = "# TOP 3 RESULTADOS ENCONTRADOS\n"
@@ -21,7 +23,7 @@ except FileNotFoundError:
 
 entrada = streamlit.text_input(
     label="Area de perguntas",
-    value=None,
+    value="",
     type="search",
     key="input_area",
     on_change= search(engine)
