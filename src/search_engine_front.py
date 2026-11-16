@@ -1,35 +1,45 @@
-import search_engine, streamlit
+import streamlit as st
+from search_engine import RAGSearchEngine
+from llm_generator import RAGLLM
 
-def search(engine : search_engine.RAGSearchEngine):
-    if "input_area" not in streamlit.session_state:
+def search(llm: RAGLLM):
+    if "input_area" not in st.session_state:
         return
-    pergunta = streamlit.session_state["input_area"]
-    if pergunta == "":
-        streamlit.session_state["output_area"] = "deu nada"
-    saida = "# TOP 3 RESULTADOS ENCONTRADOS\n"
-    resultados = engine.search(str(pergunta), k=3)
-    for i, res in enumerate(resultados, 1):
-        saida += f"{i}. [Similaridade: {res['similaridade']}%]\n"
-        saida += res['texto'] + "\n"
-    streamlit.session_state["output_area"] = saida
+    pergunta = st.session_state["input_area"]
+    resposta = ""
+    if pergunta:
+        resposta = llm.generate_awnser(pergunta)
+        st.session_state["output_area"] = resposta
 
 
-engine = search_engine.RAGSearchEngine()
-try:
+def load_resources():
+    # limpa cache em caso de embedder.py for rodado
+    st.cache_resource.clear()
+
+    engine = RAGSearchEngine()
+    llm = RAGLLM(engine)
     engine.load_data_and_build_index()
-except FileNotFoundError:
-    streamlit.write("\nErro: Arquivos de dados não encontrados. Execute o embedder.py primeiro!")
-    exit(1)
+    return llm
 
-entrada = streamlit.text_input(
+
+
+try:
+    llm = load_resources()
+except FileNotFoundError:
+    st.error("Arquivos de dados não encontrados. Execute o embedder.py primeiro!")
+    st.stop()
+
+
+
+entrada = st.text_input(
     label="Area de perguntas",
     value="",
     type="search",
     key="input_area",
-    on_change= search(engine)
+    on_change= search(llm)
     )
 
-streamlit.text_area(
+st.text_area(
     label="Output Log",
     value=None,
     height=1000, 
@@ -37,10 +47,7 @@ streamlit.text_area(
     key="output_area"
     )
 
-
-
-
-#streamlit.button(
+#st.button(
 #    label= "Pesquisar",
 #    on_click= search(engine)
 #)
