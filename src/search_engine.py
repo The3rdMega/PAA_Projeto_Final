@@ -75,28 +75,3 @@ class RAGSearchEngine:
             })
             
         return results
-
-if __name__ == "__main__":
-    # Teste prático do motor de busca
-    engine = RAGSearchEngine()
-    
-    try:
-        engine.load_data_and_build_index()
-    except FileNotFoundError:
-        print("\nErro: Arquivos de dados não encontrados. Execute o embedder.py primeiro!")
-        exit(1)
-        
-    # Laço interativo para você testar perguntas
-    print("\nMotor de busca pronto! Digite 'sair' para encerrar.")
-    #TODO: Depois substituir essa parte por um frontend completo, provavelmente usando Flask
-    while True:
-        pergunta = input("\nFaça uma pergunta: ")
-        if pergunta.lower().strip() == 'sair':
-            break
-            
-        resultados = engine.search(pergunta, k=3)
-        
-        print("\n--- TOP 3 RESULTADOS ENCONTRADOS ---")
-        for i, res in enumerate(resultados, 1):
-            print(f"\n{i}. [Similaridade: {res['similaridade']}%]")
-            print(res['texto'])
